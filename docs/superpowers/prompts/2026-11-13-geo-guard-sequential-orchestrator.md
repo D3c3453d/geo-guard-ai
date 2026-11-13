@@ -15,6 +15,8 @@ You are the coordinating agent for the Geo Guard AI implementation plan. Execute
 
 Read applicable repository instructions, the master plan, and existing progress before scheduling work. The plan defines the product requirements, acceptance cases, compatibility rules, PR boundaries, and release limits. This prompt changes the execution method from the plan's original inline-worker instruction to sequential delegation. It does not relax product requirements.
 
+I will open all GitHub PRs myself. You and every sub-agent must prepare the Markdown title/body files for me, including the final release-automation PR, rather than opening or submitting PRs. Do not run gh pr create, create draft PRs, or post PR messages through API/plugin equivalents. Include the proposed target repository, base branch, head branch, and dependencies in each handoff. This changes PR-creation responsibility only; retain the plan's implementation, verification, branch-preservation, and authorized fork-integration requirements.
+
 My explicit requirements for the model, sequential execution, and waiting for my response take precedence over conflicting optional skill instructions. In particular, a skill's instruction to make an autonomous ruling or continue despite a questionable task must not bypass the suitability gate below. Higher-priority platform instructions and permissions still apply.
 
 ## Model and scheduling
@@ -42,7 +44,7 @@ Treat one complete PR deliverable as the default implementation assignment. A PR
 | 09 | Implement complete custom/silent hook output | 17 |
 | 10 | Implement complete Codex integration | 18 |
 | 11 | Add installation intent and verify feature integration | 19; completion review of 20-24 |
-| 12 | Add release automation and finish fork integration; submit upstream last | 25 |
+| 12 | Add release automation and finish fork integration; prepare the final upstream PR message | 25 |
 
 The table is an index, not a replacement specification. Include each PR's applicable help, documentation, test-isolation, packaged-workflow, status, and upgrade requirements from the plan. Never merge a feature that needs a later PR to make its exposed behavior work.
 
@@ -94,8 +96,8 @@ Apply this rule again if new evidence makes an assignment unsuitable during impl
 6. After the worker finishes, start the sequential read-only reviewer. Give it the assignment, relevant constraints, actual BASE..HEAD diff, and verification evidence. Require separate verdicts for requirement compliance and code quality, with concrete findings and file references. Implementer self-review does not replace this review.
 7. Route findings to the original implementer, then obtain a scoped re-review. Fix requirements must remain sensible and pass preflight. Do not dismiss material findings or mark a failed gate complete to advance the sequence. Do not repeat unchanged tests solely for ceremony; rerun when changes, failures, missing evidence, or the plan's merge gates require it.
 8. Before integration, verify the actual diff, commit range, required test/CI results, PR message, and preserved user work. A worker's success summary alone is not proof. Required platform/host evidence must exist before claiming that coverage; unavailable checks remain explicitly unverified.
-9. Coordinate the upstream PR submission and fork integration required by the plan within the execution authorization and available permissions. Use the PR message file for the body. Keep feature branches and upstream PRs available; integrate into the fork's main in order without waiting for upstream acceptance. Ensure upstream diffs contain the intended contribution rather than accidentally including fork-only planning commits or all earlier unmerged features. Record any needed upstream dependencies accurately.
-10. Update verified integration status and only then schedule the next PR. Distinguish implementation complete, review approved, CI pending, integrated into the fork, and accepted upstream. These are separate states.
+9. Prepare the upstream-facing branch details and ready-to-copy PR title/body file for the user; do not submit or open a GitHub PR. Coordinate fork integration within the execution authorization and available permissions. Keep feature branches and any PRs already opened by the user available; integrate into the fork's main in order without waiting for upstream acceptance. Ensure the proposed upstream diff contains the intended contribution rather than accidentally including fork-only planning commits or all earlier unmerged features. Record dependencies and recommend draft status in the handoff when appropriate; the user creates any draft.
+10. Update verified integration status and only then schedule the next PR. Distinguish implementation complete, review approved, CI pending, message ready for user, integrated into the fork, opened by user, and accepted upstream. A missing GitHub PR number or URL alone is not a blocker and does not make an otherwise valid assignment fail suitability; required verification gates still apply.
 
 Only the coordinator controls branch/worktree switching, remote operations, scheduling, and global pause state. Respect platform approval requirements without requesting duplicate permission for actions already authorized by the user. Public release publication and release-workflow dispatch retain the separate authorization requirements in the plan.
 
@@ -110,7 +112,7 @@ Keep these facts concise and current:
 - Current agent identity, requested model/effort, and last suitability result.
 - Implementation/review/CI/integration status and actual verification results or links.
 - Outstanding questions, actual user answers, decisions, and verification limits.
-- Links to PR message files and remote PRs.
+- Links to PR message files and remote PRs only if the user has opened them; otherwise record `not opened by user` without inventing a URL.
 - The next concrete action and the prerequisites for proceeding.
 
 Give each worker this return contract: `PR/task; PREFLIGHT_PASS or NEEDS_USER_INPUT; final status; workspace/branch/base/head; changed files and behavior; verification commands with results/exit codes and limitations; PR message path; unresolved findings; next action`. Persist detailed evidence in the appropriate Markdown artifacts and return a short summary to the coordinator rather than flooding the parent conversation with logs.
@@ -119,7 +121,7 @@ For a blocked assignment, the returned question must reach me; a note hidden onl
 
 ## Final completion
 
-After PRs 01-11 and their required integration checks succeed, execute PR 12 as the final upstream submission. Include its release automation in the fork before the final comprehensive verification. Follow task 25's exact-SHA and tested-tarball requirements; retain the feature branches and keep the fork usable independently of upstream acceptance.
+After PRs 01-11 and their required integration checks succeed, implement PR 12 and prepare its title/body file for the user to open as the final upstream PR. Include its release automation in the fork before the final comprehensive verification. Follow task 25's exact-SHA and tested-tarball requirements; retain the feature branches and keep the fork usable independently of upstream acceptance. Do not open the final PR yourself.
 
 After PR 12's scoped review, run one final sequential read-only review of the combined implementation against the plan, using the same model/effort and suitability gate. Resolve material findings and reverify affected changes before declaring completion; per-PR approval alone does not establish that all interactions work together.
 
