@@ -17,14 +17,14 @@ Read applicable repository instructions, the master plan, and existing progress 
 
 I will open all GitHub PRs myself. You and every sub-agent must prepare the Markdown title/body files for me, including the final release-automation PR, rather than opening or submitting PRs. Do not run gh pr create, create draft PRs, or post PR messages through API/plugin equivalents. Include the proposed target repository, base branch, head branch, and dependencies in each handoff. This changes PR-creation responsibility only; retain the plan's implementation, verification, branch-preservation, and authorized fork-integration requirements.
 
-My explicit requirements for the model, sequential execution, and waiting for my response take precedence over conflicting optional skill instructions. In particular, a skill's instruction to make an autonomous ruling or continue despite a questionable task must not bypass the suitability gate below. Higher-priority platform instructions and permissions still apply.
+My explicit requirements for model/effort inheritance, sequential execution, and waiting for my response take precedence over conflicting optional skill instructions. In particular, a skill's instruction to make an autonomous ruling or continue despite a questionable task must not bypass the suitability gate below. Higher-priority platform instructions and permissions still apply.
 
-## Model and scheduling
+## Model inheritance and scheduling
 
-1. Every implementation, review, and fix sub-agent must use **GPT-6.1-Sol with xhigh reasoning**. Set both settings explicitly: model `gpt-6.1-sol`, reasoning effort `xhigh`. Inspect the actual spawn-tool schema; do not assume its parameter names. With the collaboration interface that exposes these fields, use `fork_turns: "none"`, `model: "gpt-6.1-sol"`, and `reasoning_effort: "xhigh"`.
-2. Verify that the runtime can select the requested model and effort. Avoid custom agent profiles that override them. If either setting is unavailable or cannot be verified through the available interface, notify me and wait. Do not silently substitute another model, lower the effort, or perform the implementation yourself.
+1. Every implementation, review, fix, and final-review sub-agent must use **the same model and effort settings as the orchestrator itself** at dispatch or resumption. Prefer the runtime's parent-inheritance mechanism; leave model/effort overrides unset when that preserves both settings. If the interface requires explicit values, resolve the orchestrator's actual current settings and pass matching values. Inspect the actual delegation-tool schema rather than assuming parameter names. Do not hard-code model identifiers, providers, or named effort levels.
+2. Verify matching settings through the runtime's documented inheritance behavior or explicit current values. A runtime that guarantees inheritance need not expose literal model identifiers to satisfy this rule. Where effort is not exposed, retain the parent's default or unset state rather than inventing a level. Avoid role profiles that override the inherited settings. If matching settings cannot be established, notify me and wait; do not select a fallback, change the orchestrator to accommodate a child, or perform the implementation yourself. If the orchestrator's settings change between assignments, apply the updated settings to subsequent and resumed sub-agents.
 3. Run at most one sub-agent at a time, including reviewers and fix agents. Wait for the current child to finish its turn before starting or resuming another. Workers must not spawn their own agents.
-4. Use a fresh implementation agent for each PR assignment and a fresh read-only reviewer after that implementation. Resume the original implementer for fixes when possible. All these roles use the requested model and effort.
+4. Use a fresh implementation agent for each PR assignment and a fresh read-only reviewer after that implementation. Resume the original implementer for fixes when its settings still match the orchestrator; otherwise reconfigure it or replace it with a precise handoff using matching settings. The inheritance requirement applies equally to all roles.
 5. Keep workers' contexts isolated. Give each worker a concise assignment with the relevant plan sections, binding global constraints, actual workspace/branch/base SHA, required interfaces, relevant progress entries, and output paths. Do not copy this conversation, previous exploration logs, or unrelated task reports into every worker.
 
 ## Assignment units and order
@@ -109,7 +109,7 @@ Keep these facts concise and current:
 
 - Global execution state and current PR/task.
 - Workspace, branch, relevant base/head or last verified SHA, and uncommitted work.
-- Current agent identity, requested model/effort, and last suitability result.
+- Current agent identity, the orchestrator's model/effort settings or verified inheritance mechanism, and last suitability result.
 - Implementation/review/CI/integration status and actual verification results or links.
 - Outstanding questions, actual user answers, decisions, and verification limits.
 - Links to PR message files and remote PRs only if the user has opened them; otherwise record `not opened by user` without inventing a URL.
@@ -131,4 +131,4 @@ Begin by inspecting the plan, progress, repository state, and available sub-agen
 
 ---
 
-Model and configuration references: [GPT-6.1 Sol model documentation](https://developers.openai.com/api/docs/models/gpt-6.1-sol), [Codex sub-agent configuration](https://learn.chatgpt.com/docs/agent-configuration/subagents). Availability and selection must be checked in the execution runtime; this prompt does not change its installed tools or account access.
+Inspect the current execution runtime for its available delegation and inheritance controls. This prompt does not require a particular model or effort level and does not change installed tools, supported settings, or account access.
